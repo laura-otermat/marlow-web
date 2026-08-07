@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f7f7f7;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  font-size: 16px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 12px;
+  padding: 12px 20px;
+  font-size: 16px;
+}
+
+.response {
+  margin-top: 20px;
+  white-space: pre-wrap;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+}
