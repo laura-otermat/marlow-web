@@ -350,6 +350,13 @@ textarea:focus {
   font-size: 27px;
 }
 
+.ask-marlow-icon {
+  color: #647d8a;
+  background: #eaf0f1;
+  font-size: 20px;
+  font-weight: 650;
+}
+
 .tool-card .eyebrow {
   margin-bottom: 7px;
 }

@@ -16,7 +16,10 @@ interface AccountProfile {
 
 interface ApiMessage {
   detail?: string | { msg?: string }[];
+  plan?: string;
   summary?: string;
+  answer?: string;
+  response?: string;
   email?: string;
   user_id?: string;
 }
@@ -80,7 +83,7 @@ function App() {
   const [memoryText, setMemoryText] = useState("");
   const [response, setResponse] = useState(() => getAuthLinkError() ?? "");
   const [responseType, setResponseType] = useState<"success" | "error">(() => getAuthLinkError() ? "error" : "success");
-  const [busy, setBusy] = useState<"auth" | "remember" | "ask" | null>(null);
+  const [busy, setBusy] = useState<"auth" | "remember" | "plan" | "summary" | null>(null);
 
   const activeAccount = accounts.find((account) => account.id === activeAccountId);
 
@@ -331,16 +334,34 @@ function App() {
     }
   }
 
-  async function ask() {
+  async function requestPlan() {
     if (!activeAccount) return;
 
-    setBusy("ask");
+    setBusy("plan");
+    setResponse("");
+    const params = new URLSearchParams({ household_id: activeAccount.householdId });
+    try {
+      const data = await requestMarlow(`/plan?${params.toString()}`);
+      setResponseType("success");
+      setResponse(data.plan || data.summary || data.response || "Marlow did not return a checklist.");
+    } catch (error) {
+      setResponseType("error");
+      setResponse(error instanceof Error ? error.message : "Unable to get a checklist.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function requestSummary() {
+    if (!activeAccount) return;
+
+    setBusy("summary");
     setResponse("");
     const params = new URLSearchParams({ household_id: activeAccount.householdId });
     try {
       const data = await requestMarlow(`/ask?${params.toString()}`);
       setResponseType("success");
-      setResponse(data.summary || "Marlow did not return a summary.");
+      setResponse(data.summary || data.answer || data.response || "Marlow did not return a summary.");
     } catch (error) {
       setResponseType("error");
       setResponse(error instanceof Error ? error.message : "Unable to get a summary.");
@@ -478,11 +499,21 @@ function App() {
 
           <section className="tool-card ask-card">
             <div className="tool-icon ask-icon" aria-hidden="true">⌕</div>
+            <p className="eyebrow">Your next steps</p>
+            <h2>Short checklist</h2>
+            <p className="tool-copy">Get a concise checklist based on this household’s saved memories.</p>
+            <button className="primary-button" type="button" onClick={requestPlan} disabled={!session || !activeAccount || busy !== null}>
+              {busy === "plan" ? "Preparing checklist…" : "Request checklist"}<span aria-hidden="true">↗</span>
+            </button>
+          </section>
+
+          <section className="tool-card ask-marlow-card">
+            <div className="tool-icon ask-marlow-icon" aria-hidden="true">?</div>
             <p className="eyebrow">Your household at a glance</p>
-            <h2>Memory summary</h2>
-            <p className="tool-copy">Get a concise summary of the memories saved for this household.</p>
-            <button className="primary-button" type="button" onClick={ask} disabled={!session || !activeAccount || busy !== null}>
-              {busy === "ask" ? "Summarizing…" : "Summarize memories"}<span aria-hidden="true">↗</span>
+            <h2>Overall summary</h2>
+            <p className="tool-copy">Get an overall summary of the memories saved for this household.</p>
+            <button className="primary-button" type="button" onClick={requestSummary} disabled={!session || !activeAccount || busy !== null}>
+              {busy === "summary" ? "Summarizing…" : "Request summary"}<span aria-hidden="true">↗</span>
             </button>
           </section>
         </section>
