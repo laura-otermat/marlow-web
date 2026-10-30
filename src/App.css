@@ -137,6 +137,36 @@
   font-size: 11px;
 }
 
+.auth-status {
+  margin: 15px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.auth-status strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.invite-owner {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 14px;
+  border-top: 1px solid #eeece4;
+}
+
+.invite-owner .form-note {
+  margin: 0;
+}
+
+.password-reset-button {
+  justify-self: start;
+  padding: 5px 0;
+}
+
 .account-switcher {
   margin-top: 20px;
 }
